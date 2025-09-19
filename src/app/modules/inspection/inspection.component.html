@@ -12,10 +12,10 @@
 
   <div [formGroup]="inspectionForm">
     @for (field of formFields; track field.id) {
-      <div class="form-group d-flex m-3" >
-        <label [for]="field.id">{{ field.name }}</label>
+      <div class="form-group d-flex m-3 row" >
+        <label class="col-3" [for]="field.id">{{ field.name }}</label>
         <select
-          class="form-select"
+          class="form-select col"
           [id]="field.id"
           [formControlName]="field.id"
           required>
