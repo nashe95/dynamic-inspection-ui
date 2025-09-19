@@ -1,12 +1,12 @@
 <ng-container>
-  <h1>Inspection</h1>
+  <h1>Pace Inspection</h1>
 
   <div class="d-flex m-3">
-    <span>Please select inspection type: </span>
-    <select class="form-select" [formControl]="inspectionTypeControl">
-      <option value="rental_quality_check_inspection">Rental Quality Check</option> <--! TODO: to iterate over values form API (-_-)-->
-      <option value="site_inspection">Site Inspection</option>
-      <option value="supplier_inspection">Supplier Inspection</option>
+    <label for="inspection-id">Please select inspection type: </label>
+    <select id="inspection-id" class="form-select" [formControl]="inspectionTypeControl">
+      @for (inspectionType of inspectionTypes$ | async; track inspectionType.id) {
+        <option [value]="inspectionType.id">{{ inspectionType.name }}</option>
+      }
     </select>
   </div>
 

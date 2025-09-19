@@ -1,20 +1,23 @@
 import { Component, inject, OnInit } from '@angular/core';
 import { HttpClient } from '@angular/common/http';
-import { map, Observable, switchMap, take, takeUntil, tap } from 'rxjs';
+import { map, Observable, of, switchMap, take, takeUntil, tap } from 'rxjs';
 import { InspectionJson, Line } from '../../models/inspection.model';
 import { FormControl, FormGroup, ReactiveFormsModule } from '@angular/forms';
 import { HasObservablesDirective } from '../../directives/has-observables.directive';
+import { AsyncPipe } from '@angular/common';
 
 @Component({
   selector: 'app-inspection',
   imports: [
-    ReactiveFormsModule
+    ReactiveFormsModule,
+    AsyncPipe
   ],
   templateUrl: './inspection.component.html',
   styleUrl: './inspection.component.scss'
 })
 export class InspectionComponent extends HasObservablesDirective implements OnInit {
 
+  public inspectionTypes$: Observable<Array<{id: string, name: string}>> = of([]);
   public inspectionTypeControl = new FormControl<string>('rental_quality_check_inspection');
   public inspectionForm = new FormGroup({});
   public formFields: Array<{id: string, name: string, condition_options: any[]}> = [];
@@ -22,13 +25,18 @@ export class InspectionComponent extends HasObservablesDirective implements OnIn
   private readonly http: HttpClient = inject(HttpClient);
 
   ngOnInit(): void {
+    //@TODO: inspection types to be pulled from API when available
+    this.inspectionTypes$ = of([
+      {id: 'rental_quality_check_inspection', name: 'Rental Quality Check'},
+      {id: 'site_inspection', name: 'Site Inspection'},
+      {id: 'supplier_inspection', name: 'Supplier Inspection'},
+    ]);
+    //load inspection lines (form fields)
     this.requestInspectionDataObservable(this.inspectionTypeControl.value!)
       .pipe(take(1))
       .subscribe(lines => this.renderInspectionLines(lines)); //initial json file load
-
     this.inspectionTypeControl.valueChanges
       .pipe(
-        tap(console.log),
         takeUntil(this.destroy$),
         switchMap(jsonName => this.requestInspectionDataObservable(jsonName!))
       ).subscribe(lines => this.renderInspectionLines(lines));
