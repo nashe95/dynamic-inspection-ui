@@ -1,6 +1,6 @@
 import { Component, inject, OnInit } from '@angular/core';
 import { HttpClient } from '@angular/common/http';
-import { map, Observable, of, switchMap, take, takeUntil, tap } from 'rxjs';
+import { map, Observable, of, switchMap, take, takeUntil } from 'rxjs';
 import { InspectionFormField, InspectionJson, Line } from '../../models/inspection.model';
 import { FormControl, FormGroup, ReactiveFormsModule, Validators } from '@angular/forms';
 import { HasObservablesDirective } from '../../directives/has-observables.directive';
