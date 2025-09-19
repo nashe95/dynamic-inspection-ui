@@ -1,106 +1,168 @@
 <ng-container>
-  <h1 class="text-center">Pace Inspection</h1>
+  <div class="inspection-container">
+    <!-- Header Section -->
+    <header class="inspection-header">
+      <a class="container d-flex justify-content-center" href="https://www.pacecarrental.co.za/">
+        <img src="pace-logo.png" alt="Pace Logo" class="img-fluid mt-3" style="width: 150px">
+      </a>
+      <div class="container">
+        <h1 class="inspection-title">Vehicle Inspection</h1>
+        <p class="inspection-subtitle">Complete the inspection by filling out all required fields</p>
+      </div>
+    </header>
 
-  <div class="d-flex m-3">
-    <label for="inspection-id">Please select inspection type: </label>
-    <select id="inspection-id" class="form-select" [formControl]="inspectionTypeControl">
-      @for (inspectionType of inspectionTypes$ | async; track inspectionType.id) {
-        <option [value]="inspectionType.id">{{ inspectionType.name }}</option>
-      }
-    </select>
-  </div>
-
-  <div [formGroup]="inspectionForm">
-    @for (field of formFields; track field.id) {
-      @if (shouldShowField(field)) {
-        <div class="form-group d-flex m-3 row">
-          <label [for]="field.id" class="form-label col-3">
-            {{ field.name }}
-            @if (field.required) {
-              <span class="text-danger">*</span>
-            }
-          </label>
-
-          <!-- Condition Field -->
-          @if (field.type === 'condition') {
-            <div class="mb-3 col">
-              <select
-                class="form-control"
-                [id]="field.id"
-                [formControlName]="field.id"
-                [class.is-invalid]="isFieldInvalid(field)">
-                <option value="" disabled>Select an option</option>
-                @for (option of field.condition_options; track option.label) {
-                  <option [value]="option.severity_level">
-                    {{ option.label }}
-                  </option>
-                }
-              </select>
-              @if (isFieldInvalid(field)) {
-                <div class="invalid-feedback">
-                  This field is required
-                </div>
-              }
-            </div>
-          }
-
-          <!-- Pictures Field -->
-          @if (field.type === 'pictures') {
-            <div class="mb-3">
-              <div class="d-flex flex-wrap gap-2 mb-2">
-                @for (img of getFieldValue(field) || []; track img.id; let i = $index) {
-                  <div class="position-relative">
-                    <img [src]="img.preview" class="img-thumbnail" style="width: 100px; height: 100px;">
-                    <button type="button" class="btn-close position-absolute top-0 end-0"
-                            (click)="removeImage(field.id, i)"></button>
-                  </div>
-                }
+    <!-- Main Content -->
+    <main class="inspection-main">
+      <div class="container">
+        <!-- Inspection Type Selector -->
+        <div class="card mb-4">
+          <div class="card-body">
+            <div class="row align-items-center">
+              <div class="col-md-3">
+                <label for="inspection-id" class="form-label fw-bold">Inspection Type</label>
               </div>
-              <input
-                type="file"
-                [id]="field.id + '_file'"
-                accept="image/*"
-                multiple
-                [disabled]="(getFieldValue(field) || []).length >= field.maxPictures!"
-                (change)="onFileSelected($event, field.id)"
-                class="form-control"
-                [class.is-invalid]="isFieldInvalid(field)">
-              <small class="form-text text-muted">
-                {{ field.required ? 'Required' : 'Optional' }}
-                @if (field.maxPictures! > 1) {
-                  <span>- Max {{ field.maxPictures }} images</span>
-                }
-              </small>
-              @if (isFieldInvalid(field)) {
-                <div class="invalid-feedback">
-                  This field is required
-                </div>
-              }
-            </div>
-          }
-
-          <!-- Notes Field -->
-          @if (field.type === 'notes') {
-            <div class="mb-3">
-            <textarea
-              class="form-control"
-              [id]="field.id"
-              [formControlName]="field.id"
-              rows="3"
-              [class.is-invalid]="isFieldInvalid(field)"
-              [placeholder]="field.required ? 'Required field' : 'Optional field'">
-            </textarea>
-            @if (isFieldInvalid(field)) {
-              <div class="invalid-feedback">
-                This field is required
+              <div class="col-md-9">
+                <select id="inspection-id" class="form-select form-select-lg" [formControl]="inspectionTypeControl">
+                  @for (inspectionType of inspectionTypes$ | async; track inspectionType.id) {
+                    <option [value]="inspectionType.id">{{ inspectionType.name }}</option>
+                  }
+                </select>
               </div>
-            }
             </div>
-          }
-
+          </div>
         </div>
-      }
-    }
-  </div>
 
+        <!-- Inspection Form -->
+        <form [formGroup]="inspectionForm" class="inspection-form">
+          @for (field of formFields; track field.id) {
+            @if (shouldShowField(field)) {
+              <div class="card mb-4" [class.border-primary]="isFieldInvalid(field)">
+                <div class="card-body">
+                  <!-- Field Header -->
+                  <div class="d-flex justify-content-between align-items-center mb-3">
+                    <h5 class="card-title mb-0 d-flex align-items-center">
+                      @if (field.required) {
+                        <span class="text-danger me-2">*</span>
+                      }
+                      {{ field.name }}
+                    </h5>
+                    @if (isFieldInvalid(field)) {
+                      <span class="badge bg-danger">Required</span>
+                    }
+                  </div>
+
+                  <!-- Condition Field -->
+                  @if (field.type === 'condition') {
+                    <div class="form-group">
+                      <select
+                        class="form-select form-select-lg"
+                        [id]="field.id"
+                        [formControlName]="field.id"
+                        [class.is-invalid]="isFieldInvalid(field)"
+                      >
+                        <option value="" disabled selected>Select an option</option>
+                        @for (option of field.condition_options; track option.label) {
+                          <option [value]="option.severity_level">
+                            {{ option.label }}
+                          </option>
+                        }
+                      </select>
+                      @if (isFieldInvalid(field)) {
+                        <div class="invalid-feedback d-block">
+                          Please select an option
+                        </div>
+                      }
+                    </div>
+                  }
+
+                  <!-- Pictures Field -->
+                  @if (field.type === 'pictures') {
+                    <div class="pictures-upload">
+                      <div class="d-flex flex-wrap gap-3 mb-3">
+                        @for (img of getFieldValue(field) || []; track img.id; let i = $index) {
+                          <div class="position-relative image-thumbnail">
+                            <img [src]="img.preview" class="img-fluid rounded" alt="Upload preview">
+                            <button
+                              type="button"
+                              class="btn btn-sm btn-danger position-absolute top-0 end-0 m-1 rounded-circle"
+                              (click)="removeImage(field.id, i)"
+                              title="Remove image"
+                            >
+                              <i class="bi bi-x"></i>
+                            </button>
+                          </div>
+                        }
+                      </div>
+
+                      <div class="upload-area" [class.has-files]="(getFieldValue(field) || []).length > 0">
+                        <label [for]="field.id + '_file'" class="upload-label">
+                          <i class="bi bi-cloud-arrow-up fs-1 mb-2"></i>
+                          <div>Drag & drop images here or click to browse</div>
+                          <div class="text-muted small mt-2">
+                            {{ field.required ? 'Required' : 'Optional' }}
+                            @if (field.maxPictures! > 1) {
+                              - Max {{ field.maxPictures }} images
+                            }
+                          </div>
+                        </label>
+                        <input
+                          type="file"
+                          [id]="field.id + '_file'"
+                          accept="image/*"
+                          multiple
+                          [disabled]="(getFieldValue(field) || []).length >= field.maxPictures!"
+                          (change)="onFileSelected($event, field.id)"
+                          class="d-none"
+                        >
+                      </div>
+                    </div>
+                  }
+
+                  <!-- Notes Field -->
+                  @if (field.type === 'notes') {
+                    <div class="form-group">
+                      <div class="form-floating">
+                      <textarea
+                        class="form-control"
+                        [id]="field.id"
+                        [formControlName]="field.id"
+                        [class.is-invalid]="isFieldInvalid(field)"
+                        [placeholder]="field.name"
+                        style="height: 100px"
+                      ></textarea>
+                        <label [for]="field.id">
+                          {{ field.required ? 'Required field' : 'Optional notes' }}
+                        </label>
+                        @if (isFieldInvalid(field)) {
+                          <div class="invalid-feedback d-block">
+                            Please provide {{ field.name.toLowerCase() }}
+                          </div>
+                        }
+                      </div>
+                    </div>
+                  }
+                </div>
+              </div>
+            }
+          }
+        </form>
+      </div>
+    </main>
+
+    <!-- Footer with Submit Button -->
+    <footer class="inspection-footer">
+      <div class="container">
+        <div class="d-flex justify-content-between align-items-center">
+          <div>
+            <span class="text-muted">All fields marked with</span>
+            <span class="text-danger mx-1">*</span>
+            <span class="text-muted">are required</span>
+          </div>
+          <button class="btn btn-primary btn-lg" (click)="onSubmit()">
+            <i class="bi bi-check-circle me-2"></i>Submit Inspection
+          </button>
+        </div>
+      </div>
+    </footer>
+  </div>
 </ng-container>

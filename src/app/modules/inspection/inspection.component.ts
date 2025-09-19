@@ -110,6 +110,12 @@ export class InspectionComponent extends HasObservablesDirective implements OnIn
     });
   }
 
+  public onSubmit() {
+    if (this.inspectionForm.valid) {//@TODO: send to API
+      console.log(this.inspectionForm.value);
+    }
+  }
+
   private requestInspectionDataObservable(path: string): Observable<Line[]> { //TODO: to be refactored to a URL (-_-)
     return this.http.get<InspectionJson>(`../../data/${ path }.json`)
       .pipe(

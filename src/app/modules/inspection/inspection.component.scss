@@ -1,0 +1,123 @@
+/* inspection.component.scss */
+.inspection-container {
+  display: flex;
+  flex-direction: column;
+  min-height: 100vh;
+  background-color: #f8f9fa;
+}
+
+.inspection-header {
+  background-color: #163a62;
+  color: white;
+  padding: 2rem 0;
+  margin-bottom: 2rem;
+  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+
+  .inspection-title {
+    font-weight: 600;
+    margin: 0;
+  }
+
+  .inspection-subtitle {
+    opacity: 0.9;
+    margin: 0.5rem 0 0;
+  }
+}
+
+.inspection-main {
+  flex: 1;
+  padding-bottom: 2rem;
+}
+
+.card {
+  border: 1px solid rgba(0, 0, 0, 0.1);
+  border-radius: 0.75rem;
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.05);
+  transition: all 0.3s ease;
+
+  &:hover {
+    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
+  }
+
+  .card-title {
+    font-weight: 500;
+    color: #2c3e50;
+  }
+}
+
+.upload-area {
+  border: 2px dashed #dee2e6;
+  border-radius: 0.5rem;
+  padding: 2rem;
+  text-align: center;
+  cursor: pointer;
+  transition: all 0.3s ease;
+
+  &.has-files {
+    border-color: #163a62;
+    background-color: rgba(13, 110, 253, 0.05);
+  }
+
+  &:hover {
+    border-color: #163a62;
+    background-color: rgba(13, 110, 253, 0.05);
+  }
+
+  .upload-label {
+    cursor: pointer;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    color: #6c757d;
+  }
+}
+
+.image-thumbnail {
+  position: relative;
+  width: 120px;
+  height: 120px;
+  overflow: hidden;
+  border-radius: 0.5rem;
+  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+
+  img {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+  }
+
+  .btn {
+    width: 24px;
+    height: 24px;
+    padding: 0;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+  }
+}
+
+.inspection-footer {
+  background-color: white;
+  padding: 1.5rem 0;
+  border-top: 1px solid #dee2e6;
+  margin-top: auto;
+
+  .btn {
+    min-width: 200px;
+  }
+}
+
+/* Responsive adjustments */
+@media (max-width: 768px) {
+  .inspection-header {
+    padding: 1.5rem 0;
+  }
+
+  .inspection-footer {
+    .d-flex {
+      flex-direction: column;
+      gap: 1rem;
+      text-align: center;
+    }
+  }
+}
