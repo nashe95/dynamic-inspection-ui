@@ -49,3 +49,18 @@ export interface Line {
   condition_options: ConditionOption[];
   field_requirement: string;
 }
+
+export interface InspectionFormField {
+  id: string;
+  name: string;
+  type: 'condition' | 'pictures' | 'notes';
+  required: boolean;
+  condition_options?: ConditionOption[];
+  maxPictures?: number;
+  noteRequirement?: string;
+  picRequirement?: string;
+  picRequirementCondition?: string;
+  noteRequirementCondition?: string;
+  dependsOn?: string;
+  line: Line;
+}

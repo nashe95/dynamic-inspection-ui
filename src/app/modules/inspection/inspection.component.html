@@ -1,5 +1,5 @@
 <ng-container>
-  <h1>Pace Inspection</h1>
+  <h1 class="text-center">Pace Inspection</h1>
 
   <div class="d-flex m-3">
     <label for="inspection-id">Please select inspection type: </label>
@@ -12,20 +12,94 @@
 
   <div [formGroup]="inspectionForm">
     @for (field of formFields; track field.id) {
-      <div class="form-group d-flex m-3 row" >
-        <label class="col-3" [for]="field.id">{{ field.name }}</label>
-        <select
-          class="form-select col"
-          [id]="field.id"
-          [formControlName]="field.id"
-          required>
-          @for (option of field.condition_options; track option) {
-            <option [value]="option.severity_level">
-              {{ option.label }}
-            </option>
+      @if (shouldShowField(field)) {
+        <div class="form-group d-flex m-3 row">
+          <label [for]="field.id" class="form-label col-3">
+            {{ field.name }}
+            @if (field.required) {
+              <span class="text-danger">*</span>
+            }
+          </label>
+
+          <!-- Condition Field -->
+          @if (field.type === 'condition') {
+            <div class="mb-3 col">
+              <select
+                class="form-control"
+                [id]="field.id"
+                [formControlName]="field.id"
+                [class.is-invalid]="isFieldInvalid(field)">
+                <option value="" disabled>Select an option</option>
+                @for (option of field.condition_options; track option.label) {
+                  <option [value]="option.severity_level">
+                    {{ option.label }}
+                  </option>
+                }
+              </select>
+              @if (isFieldInvalid(field)) {
+                <div class="invalid-feedback">
+                  This field is required
+                </div>
+              }
+            </div>
           }
-        </select>
-      </div>
+
+          <!-- Pictures Field -->
+          @if (field.type === 'pictures') {
+            <div class="mb-3">
+              <div class="d-flex flex-wrap gap-2 mb-2">
+                @for (img of getFieldValue(field) || []; track img.id; let i = $index) {
+                  <div class="position-relative">
+                    <img [src]="img.preview" class="img-thumbnail" style="width: 100px; height: 100px;">
+                    <button type="button" class="btn-close position-absolute top-0 end-0"
+                            (click)="removeImage(field.id, i)"></button>
+                  </div>
+                }
+              </div>
+              <input
+                type="file"
+                [id]="field.id + '_file'"
+                accept="image/*"
+                multiple
+                [disabled]="(getFieldValue(field) || []).length >= field.maxPictures!"
+                (change)="onFileSelected($event, field.id)"
+                class="form-control"
+                [class.is-invalid]="isFieldInvalid(field)">
+              <small class="form-text text-muted">
+                {{ field.required ? 'Required' : 'Optional' }}
+                @if (field.maxPictures! > 1) {
+                  <span>- Max {{ field.maxPictures }} images</span>
+                }
+              </small>
+              @if (isFieldInvalid(field)) {
+                <div class="invalid-feedback">
+                  This field is required
+                </div>
+              }
+            </div>
+          }
+
+          <!-- Notes Field -->
+          @if (field.type === 'notes') {
+            <div class="mb-3">
+            <textarea
+              class="form-control"
+              [id]="field.id"
+              [formControlName]="field.id"
+              rows="3"
+              [class.is-invalid]="isFieldInvalid(field)"
+              [placeholder]="field.required ? 'Required field' : 'Optional field'">
+            </textarea>
+            @if (isFieldInvalid(field)) {
+              <div class="invalid-feedback">
+                This field is required
+              </div>
+            }
+            </div>
+          }
+
+        </div>
+      }
     }
   </div>
 
