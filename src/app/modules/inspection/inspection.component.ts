@@ -111,8 +111,9 @@ export class InspectionComponent extends HasObservablesDirective implements OnIn
   }
 
   public onSubmit() {
-    if (this.inspectionForm.valid) {//@TODO: send to API
-      console.log(this.inspectionForm.value);
+    alert('Submission logic to be implemented when API is available (-_-)');
+    if (this.inspectionForm.valid) {
+      //@TODO: send to API
     }
   }
 
@@ -150,7 +151,7 @@ export class InspectionComponent extends HasObservablesDirective implements OnIn
         this.inspectionForm.addControl(`${fieldId}_condition`, control);
 
         // Update context when condition changes
-        control.valueChanges.subscribe(value => {
+        control.valueChanges.pipe(takeUntil(this.destroy$)).subscribe(value => {
           fieldContext.severity_level = Number(value) || 0;
           this.updateConditionalFields();
         });
